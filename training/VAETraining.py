@@ -1,7 +1,7 @@
 import time
 import torchvision.utils as vutils
 import matplotlib.pyplot as plt
-from VAEUtils import *
+from thesis.training.VAEUtils import *
 
 def train_vae(model, train_loader, num_epochs, optimizer, params, device='cuda'):
   model.to(device)
