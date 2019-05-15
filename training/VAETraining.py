@@ -3,7 +3,7 @@ import torchvision.utils as vutils
 import matplotlib.pyplot as plt
 from thesis.training.VAEUtils import *
 
-def train_vae(model, train_loader, num_epochs, optimizer, params, device='cuda'):
+def train_vae(model, train_loader, num_epochs, optimizer, params, device='cuda', plot_rec=False, plot_freq=1):
   model.to(device)
   model.train()
   
@@ -39,9 +39,29 @@ def train_vae(model, train_loader, num_epochs, optimizer, params, device='cuda')
           
     epoch_time = time.time() - epoch_start_time
     print("epoch %d done in %.2fs" %(epoch+1, epoch_time))
+
+    if(plot_rec and epoch % plot_freq == 0):
+       with torch.no_grad():
+
+        batch_x = next(iter(train_loader)).to(device)[:10]
+        mu, var = model.EHead(model.EQ(batch_x))
+        latent_repr = sample_normal(mu, var)
+        reconstruction = model.D(latent_repr).detach().cpu()
+
+        plt.figure(figsize=(10, 5))
+        plt.axis("off")
+        plt.imshow(np.transpose(vutils.make_grid(reconstruction, nrow=10, padding=2, normalize=True), (1,2,0)))
+        plt.show()
+        plt.close('all')
+
+        plt.figure(figsize=(10, 5))
+        plt.axis("off")
+        plt.imshow(np.transpose(vutils.make_grid(batch_x.detach().cpu(), nrow=10, padding=2, normalize=True), (1,2,0)))
+        plt.show()
+        plt.close('all')
               
   
-def train_infovae(model, train_loader, num_epochs, optimizer, params, device='cuda'):
+def train_infovae(model, train_loader, num_epochs, optimizer, params, device='cuda', plot_rec=False, plot_freq=1):
 
   model.to(device)
   model.train()
@@ -86,7 +106,7 @@ def train_infovae(model, train_loader, num_epochs, optimizer, params, device='cu
     epoch_time = time.time() - epoch_start_time
     print("epoch %d done in %.2fs" %(epoch+1, epoch_time))
 
-    if(epoch % 1 == 0):
+    if(plot_rec and epoch % plot_freq == 0):
        with torch.no_grad():
 
         batch_x = next(iter(train_loader)).to(device)[:10]
