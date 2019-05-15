@@ -1,5 +1,9 @@
 import numpy as np
 from sklearn.linear_model import Lasso
+from neupy import plots
+from tabulate import tabulate
+import matplotlib.pyplot as plt
+
 
 TINY = 1e-12
 
@@ -136,4 +140,33 @@ def evaluate_model(random_factors, latent_repr, regressor=lasso_regressor, error
     } 
 
 
-__all__ = ['evaluate_model']
+def print_scores(scores):
+  print("Disentanglement: ", round(scores['disentanglement'], 3))
+  print("Completeness: ", round(scores['completeness'], 3))
+  print("Informativeness:", round(scores['informativeness'], 3))
+  
+  
+def scores_to_array(scores):
+  return [scores['disentanglement'], scores['completeness'], scores['informativeness']]
+
+def print_scores_table(scores_list, model_names):
+  scores = np.round_(
+      np.vstack([np.array(scores_to_array(scores)) for scores in scores_list]), 
+      3
+  )
+  model_names = np.array(model_names)
+  scores = np.hstack([model_names.reshape((model_names.shape[0], 1)), scores])
+  print(tabulate(scores, headers=['Model', 'Disentanglement', 'Completeness', 'Informativeness']))
+  
+
+def plot_hinton(matrix, title="Importance matrix", ylabel="latent representation", xlabel="random factors"):
+  plt.style.use('ggplot')
+  plt.figure(figsize=(8, 8))
+  plt.title(title)
+  plt.ylabel(ylabel)
+  plt.xlabel(xlabel)
+  plots.hinton(matrix, add_legend=False)
+  plt.show()
+
+
+__all__ = ['evaluate_model', 'print_scores', 'print_scores_table', 'plot_hinton']
