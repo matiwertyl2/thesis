@@ -44,7 +44,7 @@ def train_vae(model, train_loader, num_epochs, optimizer, params, device='cuda',
        with torch.no_grad():
 
         batch_x = next(iter(train_loader)).to(device)[:10]
-        mu, var = model.EHead(model.EQ(batch_x))
+        mu, var = model.encoder(batch_x)
         latent_repr = sample_normal(mu, var)
         reconstruction = model.D(latent_repr).detach().cpu()
 
