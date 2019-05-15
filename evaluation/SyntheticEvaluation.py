@@ -128,7 +128,12 @@ def evaluate_model(random_factors, latent_repr, regressor=lasso_regressor, error
     disentanglement = disentanglement_score(R)
     completeness = completeness_score(R)
     informativeness = informativeness_score(predictions, random_factors[train_size:, :], error_function)
-    return disentanglement, completeness, informativeness
+    return {
+        'disentanglement': disentanglement,
+        'completeness': completeness,
+        'informativeness': informativeness,
+        'importance': R
+    } 
 
 
 __all__ = ['evaluate_model']
