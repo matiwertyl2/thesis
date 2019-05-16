@@ -46,7 +46,7 @@ class InfoGAN(nn.Module):
       if var.size() != torch.Size((batch_size, self.num_con_c)):
         raise RuntimeError("Var dim wrong, expected {0}, got {1}".format((batch_size, self.num_con_c), var.size()))
       
-    gen_input = torch.zeros((batch_size,self.num_con_c + self.num_z +  self.disc_c_dim * self.num_disc_c, 1, 1)).to(device)
+    gen_input = torch.zeros((batch_size,self.num_con_c + self.num_z +  self.disc_c_dim * self.num_disc_c, 1, 1)).to(self.device)
     
     output = self.generator(gen_input)
     
