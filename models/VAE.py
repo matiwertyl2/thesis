@@ -3,6 +3,12 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np 
 
+def sample_normal(mu, var, device='cuda'):
+  dim1 = mu.size(0)
+  dim2 = mu.size(1)
+  sample = torch.randn(dim1, dim2, device=device) * torch.sqrt(var) + mu
+  return sample.view(dim1, dim2, 1, 1)
+
 class InfoVAE(nn.Module):
   def __init__(self, EQ, EHead, QHead, D, input_dim, c_dim, z_dim, device='cuda'):
     super().__init__()
@@ -18,6 +24,10 @@ class InfoVAE(nn.Module):
     self.device = device
         
     print("InfoVAE created correctly")
+
+  def latent_representation(self, x):
+    mu, var = self.EHead(self.EQ(x))
+    return sample_normal(mu, var)
     
 class VAE(nn.Module):
   def __init__(self, encoder, decoder):
@@ -27,3 +37,7 @@ class VAE(nn.Module):
     self.D = decoder
     
     print("VAE created correctly")
+
+  def latent_representation(self, x):
+    mu, var = self.encoder(x)
+    return sample_normal(mu, var)
