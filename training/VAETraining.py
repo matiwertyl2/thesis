@@ -18,7 +18,7 @@ def train_vae(model, train_loader, num_epochs, optimizer, params, device='cuda',
       ###################################################################
       model.zero_grad()
       
-      latent_samples = model.latent_representation(data)
+      latent_samples, mu, var = model.latent_representation(data, return_muvar=True)
       
       reconstruction = model.D(latent_samples)
       
@@ -76,7 +76,7 @@ def train_infovae(model, train_loader, num_epochs, optimizer, params, device='cu
       ##############################################################
       model.zero_grad()
 
-      latent_samples = model.latent_representation(data)
+      latent_samples, mu, var = model.latent_representation(data, return_muvar=True)
 
       reconstruction = model.D(latent_samples)
 

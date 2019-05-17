@@ -25,9 +25,9 @@ class InfoVAE(nn.Module):
         
     print("InfoVAE created correctly")
 
-  def latent_representation(self, x):
+  def latent_representation(self, x, return_muvar=False):
     mu, var = self.EHead(self.EQ(x))
-    return sample_normal(mu, var)
+    return sample_normal(mu, var), mu, var if return_muvar else sample_normal(mu, var)
     
 class VAE(nn.Module):
   def __init__(self, encoder, decoder):
@@ -38,6 +38,6 @@ class VAE(nn.Module):
     
     print("VAE created correctly")
 
-  def latent_representation(self, x):
+  def latent_representation(self, x, return_muvar=False):
     mu, var = self.encoder(x)
-    return sample_normal(mu, var)
+    return sample_normal(mu, var), mu, var if return_muvar else sample_normal(mu, var)
