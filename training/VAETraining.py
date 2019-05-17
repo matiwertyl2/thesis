@@ -18,8 +18,7 @@ def train_vae(model, train_loader, num_epochs, optimizer, params, device='cuda',
       ###################################################################
       model.zero_grad()
       
-      mu, var = model.encoder(data)
-      latent_samples = sample_normal(mu, var)
+      latent_samples = model.latent_representation(data)
       
       reconstruction = model.D(latent_samples)
       
@@ -44,8 +43,7 @@ def train_vae(model, train_loader, num_epochs, optimizer, params, device='cuda',
        with torch.no_grad():
 
         batch_x = next(iter(train_loader)).to(device)[:10]
-        mu, var = model.encoder(batch_x)
-        latent_repr = sample_normal(mu, var)
+        latent_repr = model.latent_representation(batch_x)
         reconstruction = model.D(latent_repr).detach().cpu()
 
         plt.figure(figsize=(10, 5))
@@ -78,9 +76,7 @@ def train_infovae(model, train_loader, num_epochs, optimizer, params, device='cu
       ##############################################################
       model.zero_grad()
 
-      eq_res = model.EQ(data)
-      mu, var = model.EHead(eq_res)
-      latent_samples = sample_normal(mu, var)
+      latent_samples = model.latent_representation(data)
 
       reconstruction = model.D(latent_samples)
 
@@ -110,8 +106,7 @@ def train_infovae(model, train_loader, num_epochs, optimizer, params, device='cu
        with torch.no_grad():
 
         batch_x = next(iter(train_loader)).to(device)[:10]
-        mu, var = model.EHead(model.EQ(batch_x))
-        latent_repr = sample_normal(mu, var)
+        latent_repr = model.latent_representation(batch_x)
         reconstruction = model.D(latent_repr).detach().cpu()
 
         plt.figure(figsize=(10, 5))
