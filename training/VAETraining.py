@@ -3,7 +3,8 @@ import torchvision.utils as vutils
 import matplotlib.pyplot as plt
 from thesis.training.VAEUtils import *
 
-def train_vae(model, train_loader, num_epochs, optimizer, params, device='cuda', plot_rec=False, plot_freq=1):
+def train_vae(model, train_loader, num_epochs, optimizer, params, 
+              device='cuda', plot_rec=False, plot_freq=1, kl_coeff=5):
   model.to(device)
   model.train()
   
@@ -25,7 +26,7 @@ def train_vae(model, train_loader, num_epochs, optimizer, params, device='cuda',
       kulback_leiber = kl_loss(mu, var)
       rec_loss = reconstruction_loss(reconstruction, data)
       
-      loss = rec_loss + 5 *kulback_leiber
+      loss = rec_loss + kl_coeff *kulback_leiber
       loss.backward()
       optimizer.step()
       
